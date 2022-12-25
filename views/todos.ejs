@@ -9,7 +9,8 @@
 </head>
 <body>
    <div>
-    <h5 class="text-lg text-slate-800">Overdue <span class="bg-purple-200 px-1 rounded" id="count-overdue"><%= yesterday.length %></span></h5>
+    <h5 class="text-lg text-slate-800 inline-block">Overdue</h5>
+    <span class="bg-purple-200 px-1 rounded" id="count-overdue"><%= yesterday.length %></span>
     <ul class="list-none">
         <% for (let i = 0;i < yesterday.length;i++) { %>
            <li>
@@ -20,7 +21,8 @@
            </li>
         <% } %>
     </ul>
-    <h5>Due Today <span class="bg-purple-200 px-1 rounded" id="count-due-today"><%= today.length %></span></h5>
+    <h5 class="text-lg text-slate-800 inline-block">Due Today</h5>
+    <span class="bg-purple-200 px-1 rounded" id="count-due-today"><%= today.length %></span>
     <ul class="list-none">
         <% for (let i = 0;i < today.length;i++) { %>
            <li>
@@ -31,7 +33,8 @@
            </li>
         <% } %>
     </ul>
-    <h5>Due Later <span class="bg-purple-200 px-1 rounded" id="count-due-later"><%= tomorrow.length %></span></h5>
+    <h5 class="text-lg text-slate-800 inline-block">Due Later</h5>
+    <span class="bg-purple-200 px-1 rounded" id="count-due-later"><%= tomorrow.length %></span>
     <ul class="list-none">
         <% for (let i = 0;i < tomorrow.length;i++) { %>
            <li>
