@@ -15,6 +15,9 @@ const pathofview = path.join(__dirname+"/views");
 app.set("views",pathofview);
 
 app.get("/",async function (request, response) {
+
+  await Todo.addTodo({title:"Go on Trip",dueDate:"2022-4-30"});
+   await Todo.addTodo({title:"Complete Capstone Project",dueDate:"2023-1-9"});
    const todolist = await Todo.gettodos();
    const yesterday = await Todo.Overdue();
    const tomorrow = await Todo.duelater();
