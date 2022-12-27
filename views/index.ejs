@@ -7,9 +7,7 @@
     <title>Add Todos</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-
-        let complete = 
+    <script> 
         function updateTodolist(id){
             fetch(`/todos/${id}/markAsCompleted`,{
                 method:"PUT",
