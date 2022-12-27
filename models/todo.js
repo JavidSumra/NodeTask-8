@@ -48,8 +48,16 @@ module.exports = (sequelize, DataTypes) => {
         order:[["id","ASC"]]
       })
     }
-    markAsCompleted() {
-      return this.update({ completed: true });
+    static completetodo(){
+      return this.findAll({
+        where:{
+          completed:true,
+        },
+        order:[["id","ASC"]],
+      })
+    }
+    updatestatus(status) {
+      return this.update({ completed: status });
     }
   }
   Todo.init(
