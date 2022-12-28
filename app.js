@@ -28,15 +28,20 @@ app.get("/",async function (request, response) {
    const today = await Todo.duetoday();
    const completedtodos = await Todo.completetodo();
    
-   try {
-  if(req.accepts("html")){
+   
+  if(request.accepts("html")){
     response.status(400).render("index",{
-      todolist,yesterday,tomorrow,today,completedtodos,csrfToken:request.csrfToken(),
-    });
+    todolist,yesterday,tomorrow,today,completedtodos,csrfToken:request.csrfToken(),
+  })
+    }
+  else{
+    response.json({
+      todolist,
+      yesterday,
+      tomorrow,
+      tpday
+    })
   }
-   } catch (error) {
-    response.send(error)
-   }
 });
 
 // app.get("/todo", async function (request, response) {
