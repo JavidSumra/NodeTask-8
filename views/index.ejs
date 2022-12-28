@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <title>Add Todos</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script> 
+    var token = document.querySelector('meta[name="csrf-token"]')
+        .getAttribute("content")
         function updateTodolist(id){
             fetch(`/todos/${id}/markAsCompleted`,{
                 method:"PUT",
                 headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                    "_csrf":token
+                }),
             }).then((response)=>{
                 if(response.ok){
                     window.location.reload();
@@ -23,6 +29,9 @@
             fetch(`/todos/${id}`,{
                 method:"DELETE",
                 headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                    "_csrf":token
+                }),
             }).then((res)=>{
                 if(res.ok){
                     window.location.reload();
@@ -37,6 +46,7 @@
         <div class="col-span-3 col-start-3">
             <%- include ("header.ejs") %>
             <form action="/todos" method="post" class="mb-5">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="flex gap-4">
                     <div class="flex-auto">
                         <input type="text" placeholder="What's next?" name="title" class="w-full p-2 tetx-sm rounded outline-none border-2 border-zinc-200">
