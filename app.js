@@ -2,6 +2,8 @@
 /* eslint-disable no-undef */
 const express = require("express");
 const app = express();
+const csrf = require("tiny-csrf")
+const cookiepasrser=require("cookie-parser")
 const { Todo } = require("./models");
 const bodyParser = require("body-parser");
 const path = require("path");
@@ -15,6 +17,8 @@ const pathofview = path.join(__dirname+"/views");
 app.set("views",pathofview);
 
 app.use(express.urlencoded({extended:false}));
+app.use(cookiepasrser("this is Secret String"))
+app.use(csrf("this_should_be_32_character_long",["POST","PUT","DELETE"]));
 
 
 app.get("/",async function (request, response) {
@@ -25,9 +29,11 @@ app.get("/",async function (request, response) {
    const completedtodos = await Todo.completetodo();
    
    try {
+  if(req.accepts("html")){
     response.status(400).render("index",{
-      todolist,yesterday,tomorrow,today,completedtodos
+      todolist,yesterday,tomorrow,today,completedtodos,csrfToken:request.csrfToken(),
     });
+  }
    } catch (error) {
     response.send(error)
    }
