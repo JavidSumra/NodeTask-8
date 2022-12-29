@@ -39,7 +39,7 @@ app.get("/",async function (request, response) {
       todolist,
       yesterday,
       tomorrow,
-      tpday
+      today
     })
   }
 });
