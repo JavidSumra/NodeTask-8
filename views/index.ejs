@@ -12,11 +12,14 @@
     var token = document.querySelector('meta[name="csrf-token"]')
         .getAttribute("content")
         function updateTodolist(id){
+            let status = document.querySelector(`#check-${id}`).checked;
+
             fetch(`/todos/${id}/markAsCompleted`,{
                 method:"PUT",
                 headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({
-                    "_csrf":token
+                    "_csrf":token,
+                    completed:status,
                 }),
             }).then((response)=>{
                 if(response.ok){
