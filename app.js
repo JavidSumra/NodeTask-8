@@ -31,7 +31,7 @@ app.get("/",async function (request, response) {
    
   if(request.accepts("html")){
     response.status(400).render("index",{
-    todolist,yesterday,tomorrow,today,completedtodos,csrfToken:request.csrfToken(),
+    todolist,yesterday,tomorrow,today,completetodos,csrfToken:request.csrfToken(),
   })
     }
   else{
