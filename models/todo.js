@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
           dueDate:{
             [Op.lt]:new Date().toISOString()
           },
+          completed:false,
         },
         order:[["id","ASC"]]
       })
@@ -34,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
           dueDate:{
             [Op.gt]:new Date().toISOString()
           },
+          completed:false,
         },
         order:[["id","ASC"]]
       })
@@ -44,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
           dueDate:{
             [Op.eq]:new Date().toISOString()
           },
+          completed:false,
         },
         order:[["id","ASC"]]
       })
@@ -56,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         order:[["id","ASC"]],
       })
     }
-    updatestatus(status) {
+    setCompletionStatus(status) {
       return this.update({ completed: status });
     }
   }
