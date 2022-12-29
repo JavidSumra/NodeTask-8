@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         order:[["id","ASC"]],
       })
     }
-    setCompletionStatus(status) {
+     setCompletionStatus(status) {
       return this.update({ completed: status });
     }
   }
