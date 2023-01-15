@@ -103,7 +103,7 @@
             <form action="/LoginDetail" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken%>">
                 <input type="email" id="email" name="email" placeholder="Enter Your Email" onkeyup="validate()" required>
-                <input type="Password" name="Pass" id="Password" placeholder="Enter Your Password" onkeyup="passvalid()" required>
+                <input type="Password" name="Pass" id="Password" placeholder="Enter Your Password" required>
                 <input type="submit" class="button" value="Login">
             </form>
             <div class="signup">
@@ -113,7 +113,6 @@
     </div>
     <script>
             var email = document.getElementById("email");
-            var pass = document.getElementById("pass");
 
             function validate(){
                 if(!email.value.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/))
@@ -122,15 +121,6 @@
                 }
                 else{
                     email.style.borderColor = "green";
-                }
-            }
-            function passvalid(){
-                if(!pass.value.match(/((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,}))/))
-                {
-                    pass.style.borderColor = "red";
-                }
-                else{
-                    pass.style.borderColor = "green";
                 }
             }
             </script>
