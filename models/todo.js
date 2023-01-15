@@ -8,48 +8,74 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Todo.belongsTo(models.UserDetail,{
+        foreignKey:"userId",
+      })
     }
 
-    static addTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
+    static addTodo({ title, dueDate, userId}) {
+      return this.create({ title: title, dueDate: dueDate, completed: false ,userId});
     }
 
     static gettodos(){
       return this.findAll({order:[["id","ASC"]]});
     }
-    static Overdue(){
+    static Overdue(userId){
       return this.findAll({
         where:{
           dueDate:{
             [Op.lt]:new Date().toISOString()
           },
+          completed:false,
+          userId,
         },
         order:[["id","ASC"]]
       })
     }
-    static duelater(){
+    static duelater(userId){
       return this.findAll({
         where:{
           dueDate:{
             [Op.gt]:new Date().toISOString()
           },
+          completed:false,
+          userId,
         },
         order:[["id","ASC"]]
       })
     }
-    static duetoday(){
+    static duetoday(userId){
       return this.findAll({
         where:{
           dueDate:{
             [Op.eq]:new Date().toISOString()
           },
+          completed:false,
+          userId,
         },
         order:[["id","ASC"]]
       })
     }
-    markAsCompleted() {
-      return this.update({ completed: true });
+    static completetodo(userId){
+      return this.findAll({
+        where:{
+          completed:true,
+          userId,
+        },
+        order:[["id","ASC"]],
+      })
+    }
+     setCompletionStatus(status) {
+      return this.update({ completed: status });
+    }
+
+    static DestroyTodo(userId){
+      this.destroy({
+        where:{
+          id,
+          userId,
+        },
+      });
     }
   }
   Todo.init(
