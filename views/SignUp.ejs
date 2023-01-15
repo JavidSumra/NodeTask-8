@@ -104,15 +104,14 @@
                 <input type="text"  placeholder="Enter Your FirstName" name="fname" required>
                 <input type="text" placeholder="Enter Your LastName" name="lname" required>
                 <input type="email" id="email" name="email" placeholder="Enter Your Email" onkeyup="validate()" required>
-                <input type="Password" name="password" id="pass" placeholder="Enter Your Password" onkeyup="passvalid()" required>
+                <input type="Password" name="password" id="pass" placeholder="Enter Your Password"  required>
                 <input type="submit" class="button" value="Register">
             </form>
         </div>
     </div>
     <script>
             var email = document.getElementById("email");
-            var pass = document.getElementById("pass");
-
+           
             function validate(){
                 if(!email.value.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/))
                 {
@@ -120,15 +119,6 @@
                 }
                 else{
                     email.style.borderColor = "green";
-                }
-            }
-            function passvalid(){
-                if(!pass.value.match(/((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,}))/))
-                {
-                    pass.style.borderColor = "red";
-                }
-                else{
-                    pass.style.borderColor = "green";
                 }
             }
             </script>
