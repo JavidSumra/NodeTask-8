@@ -42,7 +42,7 @@ app.use(passport.session());
 passport.use(
   new LocalStrategy(
     {
-      usenameField: "email",
+      usernameField: "email",
       passwordField: "password",
     },
     (username, password, done) => {
