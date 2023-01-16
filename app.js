@@ -147,7 +147,7 @@ app.get("/signout", (request, response, next) => {
 });
 app.post("/userdetail", async (request, response) => {
   try {
-    const findUser = await User.findAll({email:request.body.email})
+    const findUser = await User.findAll({where:{email:request.body.email}})
     if (findUser.length != 0) {
       request.flash("error","Email Already Exist")
       return response.redirect("/Signup")
