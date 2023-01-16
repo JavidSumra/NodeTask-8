@@ -9,12 +9,6 @@
     "prepare": "husky install",
     "test": "NODE_ENV=test jest --detectOpenHandles",
   },
-  "lint-staged": {
-    "*.js": [
-      "eslint",
-      "prettier --write ."
-    ]
-  },
   "keywords":[],
   "author": "",
   "license": "ISC",
