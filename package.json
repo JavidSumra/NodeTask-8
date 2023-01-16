@@ -1,13 +1,20 @@
 {
   "name": "todo-manager",
   "version": "1.0.0",
-  "description":"",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "pretest": "npx sequelize-cli db:drop && npx sequelize-cli db:create",
-    "prepare": "husky install",
+    "db:create:test":"NODE_ENV=test npx sequelize-cli db:create",
+    "pretest":"NODE_ENV=test npx sequelize-cli db:drop && NODE_ENV=test npx sequelize-cli db:create",
     "test": "NODE_ENV=test jest --detectOpenHandles",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint",
+      "prettier --write ."
+    ]
   },
   "keywords":[],
   "author": "",
