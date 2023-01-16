@@ -1,5 +1,5 @@
 "use strict";
-const { Model,Op} = require("sequelize");
+const { Model, Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
     /**
@@ -8,65 +8,98 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Todo.belongsTo(models.UserDetail, {
+        foreignKey: "userId",
+      });
     }
 
-    static addTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
+    static addTodo({ title, dueDate, userId }) {
+      return this.create({
+        title: title,
+        dueDate: dueDate,
+        completed: false,
+        userId,
+      });
     }
 
-    static gettodos(){
-      return this.findAll({order:[["id","ASC"]]});
+    static gettodos() {
+      return this.findAll({ order: [["id", "ASC"]] });
     }
-    static Overdue(){
+    static Overdue(userId) {
       return this.findAll({
-        where:{
-          dueDate:{
-            [Op.lt]:new Date().toISOString()
+        where: {
+          dueDate: {
+            [Op.lt]: new Date().toISOString(),
           },
-          completed:false,
+          completed: false,
+          userId,
         },
-        order:[["id","ASC"]]
-      })
+        order: [["id", "ASC"]],
+      });
     }
-    static duelater(){
+    static duelater(userId) {
       return this.findAll({
-        where:{
-          dueDate:{
-            [Op.gt]:new Date().toISOString()
+        where: {
+          dueDate: {
+            [Op.gt]: new Date().toISOString(),
           },
-          completed:false,
+          completed: false,
+          userId,
         },
-        order:[["id","ASC"]]
-      })
+        order: [["id", "ASC"]],
+      });
     }
-    static duetoday(){
+    static duetoday(userId) {
       return this.findAll({
-        where:{
-          dueDate:{
-            [Op.eq]:new Date().toISOString()
+        where: {
+          dueDate: {
+            [Op.eq]: new Date().toISOString(),
           },
-          completed:false,
+          completed: false,
+          userId,
         },
-        order:[["id","ASC"]]
-      })
+        order: [["id", "ASC"]],
+      });
     }
-    static completetodo(){
+    static completetodo(userId) {
       return this.findAll({
-        where:{
-          completed:true,
+        where: {
+          completed: true,
+          userId,
         },
-        order:[["id","ASC"]],
-      })
+        order: [["id", "ASC"]],
+      });
     }
-     setCompletionStatus(status) {
+    setCompletionStatus(status) {
       return this.update({ completed: status });
+    }
+
+    static DestroyTodo(userId) {
+      this.destroy({
+        where: {
+          id,
+          userId,
+        },
+      });
     }
   }
   Todo.init(
     {
-      title: DataTypes.STRING,
-      dueDate: DataTypes.DATEONLY,
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: 5,
+        },
+      },
+      dueDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        validate: {
+          notNull: true,
+        },
+      },
       completed: DataTypes.BOOLEAN,
     },
     {
