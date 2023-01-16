@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 const express = require("express");
 const app = express();
 const csrf = require("tiny-csrf");
 const cookiepasrser = require("cookie-parser");
-const Todo = require("./models/todo");
-const UserDetail = require("./models/userdetail");
+const { Todo, User } = require("./models")
 const bodyParser = require("body-parser");
 const path = require("path");
 const ejs = require("ejs");
@@ -22,10 +21,6 @@ const bcrypt = require("bcrypt");
 
 const saltround = 10;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookiepasrser("this is Secret String"));
-app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
 app.use(
   session({
@@ -46,7 +41,7 @@ passport.use(
       passwordField: "password",
     },
     (username, password, done) => {
-      UserDetail.findOne({
+      User.findOne({
         where: {
           email: username,
         },
@@ -77,7 +72,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  UserDetail.findByPk(id)
+  User.findByPk(id)
     .then((user) => {
       done(null, user);
     })
@@ -86,13 +81,19 @@ passport.deserializeUser((id, done) => {
     });
 });
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookiepasrser("this is Secret String"));
+app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
+
 app.set("view engine", "ejs");
 const pathofview = path.join(__dirname + "/views");
 app.set("views", pathofview);
 app.use(flash());
 
 app.use(function (request, response, next) {
-  response.locals.messages = request.flash();
+  const Message = request.flash();
+  response.locals.messages = Message;
   next();
 });
 
@@ -106,7 +107,7 @@ app.get("/Signup", (request, response) => {
 
 app.get(
   "/todoPage",
-  connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
   async (request, response) => {
     const UserId = request.user.id;
 
@@ -139,17 +140,24 @@ app.get("/signout", (request, response, next) => {
     if (err) {
       return next(err);
     }
+    request.flash("success","Signout Successfully")
     response.redirect("/");
   });
 });
 app.post("/userdetail", async (request, response) => {
   try {
-    const hashPass = await bcrypt.hash(request.body.password, saltround);
+    const findUser = await User.findAll({email:request.body.email})
+    if (findUser.length != 0) {
+      request.flash("error","Email Already Exist")
+      return response.redirect("/Signup")
+    }    
+    else {
+      const hashPass = await bcrypt.hash(request.body.password, saltround);
 
-    const add = await UserDetail.create({
-      email: request.body.email,
+    const add = await User.create({
       FirstName: request.body.fname,
       LastName: request.body.lname,
+      email: request.body.email,
       password: hashPass,
     });
     console.log(request.body.email);
@@ -161,8 +169,9 @@ app.post("/userdetail", async (request, response) => {
       if (err) {
         console.log(err);
       }
-      response.redirect("/todoPage");
+     return response.redirect("/todoPage");
     });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -178,7 +187,7 @@ app.post(
 );
 app.post(
   "/todos",
-  connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
   async (request, response) => {
     try {
       let todotitle = request.body.title;
@@ -190,24 +199,30 @@ app.post(
         completed: false,
         userId: request.user.id,
       });
+      request.flash("success","Added Successfully");
       return response.status(400).redirect("/todoPage");
     } catch (error) {
-      console.log(error);
-      return response.status(400).json(error);
+     request.flash("error",error)
+      return response.redirect("/todoPage");
     }
   }
 );
 
 app.put(
   "/todos/:id/markAsCompleted",
-  connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
   async function (request, response) {
     const todoupdate = await Todo.findByPk(request.params.id);
     try {
       const updatedTodolist = await todoupdate.setCompletionStatus(
         request.body.completed
       );
-      // console.log(updatedTodolist?true:false)
+      if(updatedTodolist?true:false){
+        request.flash("success","Successfully Updated")
+      }
+      else{
+        request.flash("error","Failed Update")
+      }
       response.status(201).send(updatedTodolist ? true : false);
     } catch (error) {
       console.log(error);
@@ -218,13 +233,16 @@ app.put(
 
 app.delete(
   "/todos/:id",
-  connectEnsureLogin.ensureLoggedIn(),
+  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
   async function (request, response) {
-    console.log("We have to delete a Todo with ID: ", request.params.id);
-    const deleteItem = await Todo.DestroyTodo(
-      request.params.id,
-      request.user.id
-    );
+    console.log("We have to delete a Todo with ID: ", request.params.id+" "+request.user.id);
+    const deleteItem = await Todo.DestroyTodo(request.params.id,request.user.id);
+    if(deleteItem?true:false){
+      request.flash("success","Successfully Deleted")
+    }
+    else{
+      request.flash("error","Failed Deleted")
+    }
     response.send(deleteItem ? true : false);
   }
 );
