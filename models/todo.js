@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Todo.belongsTo(models.UserDetail, {
+      Todo.belongsTo(models.User, {
         foreignKey: "userId",
       });
     }
@@ -74,8 +74,8 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: status });
     }
 
-    static DestroyTodo(userId) {
-      this.destroy({
+    static DestroyTodo(id,userId) {
+     return this.destroy({
         where: {
           id,
           userId,
