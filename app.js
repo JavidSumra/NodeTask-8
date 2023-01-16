@@ -25,6 +25,7 @@ const saltround = 10;
 app.use(
   session({
     secret: "my-super-secret-key-2021095900025026",
+    secure:true,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
     },
