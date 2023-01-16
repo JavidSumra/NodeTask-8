@@ -1,12 +1,12 @@
 {
   "name": "todo-manager",
   "version": "1.0.0",
+  "description":"",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": " jest",
-    "prepare": "husky install",
     "pretest": "npx sequelize-cli db:drop && npx sequelize-cli db:create",
+    "prepare": "husky install",
     "test": "NODE_ENV=test jest --detectOpenHandles",
   },
   "lint-staged": {
@@ -15,6 +15,7 @@
       "prettier --write ."
     ]
   },
+  "keywords":[],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -40,6 +41,5 @@
     "prettier": "^2.7.1",
     "sequelize-cli": "^6.4.1",
     "supertest": "^6.2.4"
-  },
-  "description": ""
+  }
 }
