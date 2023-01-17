@@ -25,7 +25,6 @@ const saltround = 10;
 app.use(
   session({
     secret: "my-super-secret-key-2021095900025026",
-    secure:true,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
     },
@@ -100,10 +99,10 @@ app.use(function (request, response, next) {
 
 app.get("/", async (request, response) => {
   // console.log(await UserDetail.findAll({}))
-  response.status(200).render("Login", { csrfToken: request.csrfToken() });
+  response.render("Login", { csrfToken: request.csrfToken() });
 });
 app.get("/Signup", (request, response) => {
-  response.status(200).render("SignUp", { csrfToken: request.csrfToken() });
+  response.render("SignUp", { csrfToken: request.csrfToken() });
 });
 
 app.get(
@@ -118,7 +117,7 @@ app.get(
     const completedtodos = await Todo.completetodo(UserId);
 
     if (request.accepts("html")) {
-      response.status(200).render("index", {
+      response.render("index", {
         yesterday,
         tomorrow,
         today,
@@ -131,6 +130,7 @@ app.get(
         yesterday,
         tomorrow,
         today,
+        completedtodos,
       });
     }
   }
@@ -182,7 +182,8 @@ app.post(
   "/LoginDetail",
   passport.authenticate("local", { failureRedirect: "/", failureFlash: true }),
   (request, response) => {
-    console.log(request.body);
+    // console.log(request.body);
+    request.flash("success","Login Successfully")
     response.redirect("/todoPage");
   }
 );
@@ -201,10 +202,9 @@ app.post(
         userId: request.user.id,
       });
       request.flash("success","Added Successfully");
-      return response.status(400).redirect("/todoPage");
-    } catch (error) {
-     request.flash("error",error)
       return response.redirect("/todoPage");
+    } catch (error) {
+     return response.status(422).json(error)
     }
   }
 );
@@ -224,7 +224,7 @@ app.put(
       else{
         request.flash("error","Failed Update")
       }
-      response.status(201).send(updatedTodolist ? true : false);
+      return response.json(updatedTodolist?true:false)
     } catch (error) {
       console.log(error);
       return response.status(400).json(error);
@@ -244,7 +244,7 @@ app.delete(
     else{
       request.flash("error","Failed Deleted")
     }
-    response.send(deleteItem ? true : false);
+    return response.send(deleteItem ? true : false);
   }
 );
 
