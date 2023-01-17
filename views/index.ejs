@@ -1,113 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <title>Add Todos</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+      function updateTodolist(id) {
+        let status = document.querySelector(`#check-${id}`).checked;
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="csrf-token" content="<%= csrfToken %>" />
-  <title>Add Todos</title>
-  <link rel="stylesheet" href="/css/style.css" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    var token = document
-      .querySelector('meta[name="csrf-token"]')
-      .getAttribute("content");
-    function updateTodolist(id) {
-      let status = document.querySelector(`#check-${id}`).checked;
-
-      fetch(`/todos/${id}/markAsCompleted`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          _csrf: token,
-          completed: status,
-        }),
-      })
-        .then((response) => {
-          if (response.ok) {
-            window.location.reload();
-          }
+        fetch(`/todos/${id}/markAsCompleted`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            _csrf: token,
+            completed: status,
+          }),
         })
-        .catch((err) => console.log(err));
-    }
+          .then((response) => {
+            if (response.ok) {
+              window.location.reload();
+            }
+          })
+          .catch((err) => console.log(err));
+      }
 
-    function deleteTodo(id) {
-      fetch(`/todos/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          _csrf: token,
-        }),
-      })
-        .then((res) => {
-          if (res.ok) {
-            window.location.reload();
-          }
+      function deleteTodo(id) {
+        fetch(`/todos/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            _csrf: token,
+          }),
         })
-        .catch((err) => console.log(err));
-    }
-  </script>
-</head>
+          .then((res) => {
+            if (res.ok) {
+              window.location.reload();
+            }
+          })
+          .catch((err) => console.log(err));
+      }
+    </script>
+  </head>
 
-<body>
-  <div class="grid grid-cols-7">
-    <div class="col-span-3 col-start-3">
-      <% if(messages && messages.error && messages.error.length !=0) { %>
+  <body>
+    <div class="grid grid-cols-7">
+      <div class="col-span-3 col-start-3">
+        <% if(messages && messages.error && messages.error.length !=0) { %>
         <div
-          style="background-color: #fee2e2;border-color: #f87171;color: #ef4444;border-radius: 3px; position: relative;padding: 10px;text-align: center;margin-bottom: 5px;"
-          role="alert">
-          <% for(let i=0;i<messages.error.length;i++) { %>
-            <strong>
-              <%=messages.error[i] %>
-            </strong>
-            <% } %>
+          style="
+            background-color: #fee2e2;
+            border-color: #f87171;
+            color: #ef4444;
+            border-radius: 3px;
+            position: relative;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 5px;
+          "
+          role="alert"
+        >
+          <% for(var i = 0; i < messages.error.length; i++) { %>
+          <strong> <%=messages.error[i] %> </strong>
+          <% } %>
+        </div>
+        <% } %> <% if(messages && messages.success && messages.success.length
+        !=0) { %>
+        <div
+          style="
+            background-color: #ecfccb;
+            border-color: #a3e635;
+            color: #84cc16;
+            border-radius: 3px;
+            position: relative;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 3px;
+            margin-top: 10px;
+          "
+          role="success"
+        >
+          <% for(var i = 0; i < messages.success.length; i++ ) { %>
+          <strong> <%=messages.success[i] %> </strong>
+          <% } %>
         </div>
         <% } %>
-          <% if(messages && messages.success && messages.success.length !=0) { %>
-            <div
-              style="background-color: #ecfccb;border-color: #a3e635;color: #84cc16;border-radius: 3px; position: relative;padding: 10px;text-align: center;margin-bottom: 3px;margin-top: 10px;"
-              role="success">
-              <% for(let i=0;i<messages.success.length;i++) { %>
-                <strong>
-                  <%=messages.success[i] %>
-                </strong>
-                <% } %>
-            </div>
-            <% } %>
-              <div class="grid grid-cols-2">
-                <div class="text-2xl my-4 font-semibold text-gray-600 ">Hello <%= Name %>, <%- include ("header.ejs") %>
-                </div>
-                <div class="flex items-center justify-center">
-                  <a href="/signout"
-                    class="inline-block rounded outline-none bg-green-700 px-4 rounded py-2 font-medium mr-3 mb-2 text-white"">SignOut</a>
+        <div class="grid grid-cols-2">
+          <div class="text-2xl my-4 font-semibold text-gray-600">
+            Hello <%= Name %>, <%-include ("header.ejs") %>
+          </div>
+          <div class="flex items-center justify-center">
+            <a
+              href="/signout"
+              class="inline-block rounded outline-none bg-green-700 px-4 rounded py-2 font-medium mr-3 mb-2 text-white"
+              >SignOut</a
+            >
+          </div>
         </div>
-       </div>
         <form action=" /todos" method="post" class="mb-5">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                    <div class="flex gap-4">
-                      <div class="flex-auto">
-                        <input type="text" placeholder="What's next?" name="title"
-                          class="w-full p-2 tetx-sm rounded outline-none border-2 border-zinc-200" required />
-                      </div>
-                      <div class="flex-auto">
-                        <input type="date" name="dueDate" id=""
-                          class="rounded outline-none border-2 border-zinc-200 w-full p-2 tetx-sm leading-4" required />
-                      </div>
-                      <div class="flex-auto">
-                        <button type="submit"
-                          class="rounded outline-none bg-green-700 px-4 rounded py-2 font-medium mr-3 mb-2 text-white">
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                    </form>
-                    <%- include ("todos.ejs",{title:"Overdue",todotime:yesterday}) %> <%- include
-                        ("todos.ejs",{title:"Due Today",todotime:today}) %> <%- include ("todos.ejs",{title:"Due
-                          Later",todotime:tomorrow}) %> <%- include
-                            ("todos.ejs",{title:"completeditems",todotime:completedtodos}) %>
-                </div>
-              </div>
-</body>
-
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <div class="flex gap-4">
+            <div class="flex-auto">
+              <input
+                type="text"
+                placeholder="What's next?"
+                name="title"
+                class="w-full p-2 tetx-sm rounded outline-none border-2 border-zinc-200"
+                required
+              />
+            </div>
+            <div class="flex-auto">
+              <input
+                type="date"
+                name="dueDate"
+                id=""
+                class="rounded outline-none border-2 border-zinc-200 w-full p-2 tetx-sm leading-4"
+                required
+              />
+            </div>
+            <div class="flex-auto">
+              <button
+                type="submit"
+                class="rounded outline-none bg-green-700 px-4 rounded py-2 font-medium mr-3 mb-2 text-white"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </form>
+        <%- include ("todos.ejs",{title:"Overdue",todotime:yesterday}) %> <%-
+        include ("todos.ejs",{title:"Due Today",todotime:today}) %> <%- include
+        ("todos.ejs",{title:"Due Later",todotime:tomorrow}) %> <%- include
+        ("todos.ejs",{title:"CompletedTodos",todotime:completedtodos}) %>
+      </div>
+    </div>
+  </body>
 </html>
