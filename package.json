@@ -5,9 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "pretest": "npx sequelize-cli db:drop && npx sequelize-cli db:create",
-    "test": "NODE_ENV=test jest --detectOpenHandles",
-    "prepare": "husky install",
-    "lint:ejs": "ejslint /opt/render/project/src/views/index.ejs"
+    "test": " jest --detectOpenHandles",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.js": [
