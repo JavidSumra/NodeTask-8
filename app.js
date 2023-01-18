@@ -224,7 +224,7 @@ app.put(
       else{
         request.flash("error","Failed Update")
       }
-      return response.json(updatedTodolist?true:false)
+      return response.json(updatedTodolist)
     } catch (error) {
       console.log(error);
       return response.status(400).json(error);
@@ -237,14 +237,14 @@ app.delete(
   connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
   async function (request, response) {
     console.log("We have to delete a Todo with ID: ", request.params.id+" "+request.user.id);
-    const deleteItem = await Todo.DestroyTodo(request.params.id,request.user.id);
+    let deleteItem = await Todo.DestroyTodo(request.params.id,request.user.id);
     if(deleteItem?true:false){
       request.flash("success","Successfully Deleted")
     }
     else{
       request.flash("error","Failed Deleted")
     }
-    return response.send(deleteItem ? true : false);
+    return response.send(deleteItem?true:false);
   }
 );
 
