@@ -52,7 +52,11 @@ describe("Todo test suite ", () => {
     expect(res.statusCode).toBe(302);
   });
 
+<<<<<<< HEAD
   test("Login", async () => {
+=======
+  test("responds with json at /todos", async () => {
+>>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
     const agent = request.agent(server);
     await login(agent, "javidsumara987@gmail.com", "12345678");
     const res = await agent.get("/todoPage");
@@ -63,7 +67,11 @@ describe("Todo test suite ", () => {
       completed: false,
       _csrf: csrfToken,
     });
+<<<<<<< HEAD
     expect(response.statusCode).toBe(302); 
+=======
+    expect(response.statusCode).toBe(302); //http status code
+>>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
   });
 
   test("Deleting todo test", async () => {
@@ -90,7 +98,11 @@ describe("Todo test suite ", () => {
     csrfToken = extractCsrfToken(res);
 
     const deleteTodo = await agent
+<<<<<<< HEAD
       .delete(`/todos/${newTodo.id}`)
+=======
+      .delete(`/todos/${newTodo.id}/markAsCompleted`)
+>>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
       .send({ _csrf: csrfToken });
 
       const status = Boolean(deleteTodo.text)
@@ -125,4 +137,8 @@ describe("Todo test suite ", () => {
     const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
     expect(parsedUpdateResponse.completed).toBe(false);
   });
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270

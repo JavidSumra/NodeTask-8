@@ -17,8 +17,13 @@
         <% for (let i = 0;i < todotime.length;i++) { %>
          <li>
             <div class="flex items-center ml-2 py-1 px-2 my-2 w-fit rounded hover:bg-violet-200"><label for="check-<%=todotime[i]%>" class="text-Neutral-900 pointer ml-5 text-m">
+<<<<<<< HEAD
                <input type="checkbox" name="status"  class="w4 h-4 bg-gray-100 text-blue-100" onclick="updateTodolist(<%=todotime[i].id%>)" <%= todotime[i].completed ? "checked":"" %> id="check-<%=todotime[i].id%>">
                <label for="check-<%=todotime[i].id%>" class="text-Neutral-900 pointer ml-5 text-m" title="<%=todotime[i].createdAt.toLocaleDateString()%>"><%= todotime[i].title %></label>
+=======
+               <input type="checkbox" name="complete"  class="w4 h-4 bg-gray-100 text-blue-100" onclick="updateTodolist(<%=todotime[i].id%>)" <%= todotime[i].completed ? "checked":"" %> id="check-<%=todotime[i].id%>">
+               <label for="check-<%=todotime[i].id%>" class="text-Neutral-900 pointer ml-5 text-m"><%= todotime[i].title %></label>
+>>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
                <ion-icon name="trash-outline" class="mx-2" onclick="deleteTodo(<%=todotime[i].id%>)" ></ion-icon>
             </div>
           </li>  
