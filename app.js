@@ -4,15 +4,17 @@ const express = require("express");
 const app = express();
 const csrf = require("tiny-csrf");
 const cookiepasrser = require("cookie-parser");
-<<<<<<< HEAD
 const { Todo, User } = require("./models");
-=======
-const { Todo, User } = require("./models")
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
+// const { Todo, User } = require("./models")
 const bodyParser = require("body-parser");
 const path = require("path");
 const ejs = require("ejs");
 const flash = require("connect-flash");
+
+// Cron Job and Node Mailer
+
+const cron = require("node-cron");
+const mail = require("./nodemailer");
 
 const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
@@ -22,17 +24,9 @@ const LocalStrategy = require("passport-local");
 app.use(bodyParser.json());
 
 const bcrypt = require("bcrypt");
-<<<<<<< HEAD
-const { type } = require("os");
 
 const saltround = 10;
 
-=======
-
-const saltround = 10;
-
-
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
 app.use(
   session({
     secret: "my-super-secret-key-2021095900025026",
@@ -118,11 +112,7 @@ app.get("/Signup", (request, response) => {
 
 app.get(
   "/todoPage",
-<<<<<<< HEAD
   connectEnsureLogin.ensureLoggedIn({ redirectTo: "/" }),
-=======
-  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
   async (request, response) => {
     const UserId = request.user.id;
 
@@ -132,7 +122,7 @@ app.get(
     const completedtodos = await Todo.completetodo(UserId);
 
     if (request.accepts("html")) {
-      response.render("index", {
+      response.status(202).render("index", {
         yesterday,
         tomorrow,
         today,
@@ -141,7 +131,7 @@ app.get(
         csrfToken: request.csrfToken(),
       });
     } else {
-      response.json({
+      response.status(202).json({
         yesterday,
         tomorrow,
         today,
@@ -156,17 +146,13 @@ app.get("/signout", (request, response, next) => {
     if (err) {
       return next(err);
     }
-<<<<<<< HEAD
     request.flash("success", "Signout Successfully");
-=======
-    request.flash("success","Signout Successfully")
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
+
     response.redirect("/");
   });
 });
 app.post("/userdetail", async (request, response) => {
   try {
-<<<<<<< HEAD
     const findUser = await User.findAll({
       where: { email: request.body.email },
     });
@@ -197,36 +183,6 @@ app.post("/userdetail", async (request, response) => {
   } catch (error) {
     console.log(error);
     response.send("Error:" + error);
-=======
-    const findUser = await User.findAll({where:{email:request.body.email}})
-    if (findUser.length != 0) {
-      request.flash("error","Email Already Exist")
-      return response.redirect("/Signup")
-    }    
-    else {
-      const hashPass = await bcrypt.hash(request.body.password, saltround);
-
-    const add = await User.create({
-      FirstName: request.body.fname,
-      LastName: request.body.lname,
-      email: request.body.email,
-      password: hashPass,
-    });
-    console.log(request.body.email);
-    console.log(hashPass);
-    console.log(request.body.fname);
-    console.log(request.body.lname);
-    console.log(await bcrypt.compare(request.body.password, hashPass));
-    request.login(add, (err) => {
-      if (err) {
-        console.log(err);
-      }
-     return response.redirect("/todoPage");
-    });
-    }
-  } catch (error) {
-    console.log(error);
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
   }
 });
 
@@ -235,76 +191,52 @@ app.post(
   passport.authenticate("local", { failureRedirect: "/", failureFlash: true }),
   (request, response) => {
     // console.log(request.body);
-<<<<<<< HEAD
     request.flash("success", "Login Successfully");
-=======
-    request.flash("success","Login Successfully")
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
+
     response.redirect("/todoPage");
   }
 );
 app.post(
   "/todos",
-<<<<<<< HEAD
   connectEnsureLogin.ensureLoggedIn({ redirectTo: "/" }),
-=======
-  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
   async (request, response) => {
     try {
       let todotitle = request.body.title;
       let completiondate = request.body.dueDate ?? new Date().toISOString();
-
+      console.log(completiondate);
       const todos = await Todo.create({
         title: todotitle.trim(),
         dueDate: completiondate,
         completed: false,
         userId: request.user.id,
       });
-<<<<<<< HEAD
+
       request.flash("success", "Added Successfully");
       return response.redirect("/todoPage");
     } catch (error) {
       return response.status(422).json(error);
-=======
-      request.flash("success","Added Successfully");
-      return response.redirect("/todoPage");
-    } catch (error) {
-     return response.status(422).json(error)
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
     }
   }
 );
 
 app.put(
   "/todos/:id/markAsCompleted",
-<<<<<<< HEAD
+
   connectEnsureLogin.ensureLoggedIn({ redirectTo: "/" }),
-=======
-  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
+
   async function (request, response) {
     const todoupdate = await Todo.findByPk(request.params.id);
     try {
       const updatedTodolist = await todoupdate.setCompletionStatus(
         request.body.completed
       );
-<<<<<<< HEAD
+
       if (updatedTodolist ? true : false) {
         request.flash("success", "Successfully Updated");
       } else {
         request.flash("error", "Failed Update");
       }
       return response.json(updatedTodolist);
-=======
-      if(updatedTodolist?true:false){
-        request.flash("success","Successfully Updated")
-      }
-      else{
-        request.flash("error","Failed Update")
-      }
-      return response.json(updatedTodolist)
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
     } catch (error) {
       console.log(error);
       return response.status(400).json(error);
@@ -314,7 +246,7 @@ app.put(
 
 app.delete(
   "/todos/:id",
-<<<<<<< HEAD
+
   connectEnsureLogin.ensureLoggedIn({ redirectTo: "/" }),
   async function (request, response) {
     console.log(
@@ -328,20 +260,52 @@ app.delete(
       request.flash("error", "Failed Deleted");
     }
     return response.send(deleteItem ? true : false);
-=======
-  connectEnsureLogin.ensureLoggedIn({redirectTo:"/"}),
-  async function (request, response) {
-    console.log("We have to delete a Todo with ID: ", request.params.id+" "+request.user.id);
-    let deleteItem = await Todo.DestroyTodo(request.params.id,request.user.id);
-    if(deleteItem?true:false){
-      request.flash("success","Successfully Deleted")
-    }
-    else{
-      request.flash("error","Failed Deleted")
-    }
-    return response.send(deleteItem?true:false);
->>>>>>> 9a2e8d135357aa45d441ac3ac3f212b32e238270
   }
 );
 
+const remindTodos = async () => {
+  let today = new Date().toISOString().split("T")[0];
+  let incompleteTodos = await Todo.inCompletedTodos(today);
+
+  let usersId = [];
+
+  incompleteTodos.map(async (todo) => {
+    usersId.push(todo.userId);
+  });
+  usersId = [...new Set(usersId)];
+
+  usersId.map(async (id) => {
+    let userIncomplete = await Todo.incompleteTodosByUser(today, id);
+    let { FirstName, email } = await User.findByPk(id);
+    console.log(email);
+    let todosList = userIncomplete.map((todo, index) => {
+      return `(${index + 1}) ${todo.title}\n`;
+    });
+
+    mail(
+      email,
+      "Friendly Reminder: Pending To-Do's Update",
+      `Dear ${FirstName},
+  
+      I hope this email finds you well. As a gentle reminder, our server has detected a few pending to-do items associated with your account. We encourage you to take a moment to review and complete these tasks for smoother workflow and better organization.
+      
+      Here's a quick summary of your pending to-do's:
+      
+      ${todosList.join("")}
+  
+      Please log in to your account and access the 'To-Do' section to view the detailed list and associated deadlines. Our team is always available to assist you with any questions or clarifications you may have regarding these tasks.
+      
+      Taking prompt action on these pending to-do's will not only help you stay on top of your responsibilities but also contribute to the overall efficiency of our operations.
+      
+      If you have already completed any of these tasks, kindly ignore this email. We appreciate your attention to this matter and thank you for using our platform to manage your tasks.
+  
+      Thank you for your cooperation.
+      Best regards,
+      Todo App`
+    );
+  });
+};
+cron.schedule("0 19 * * *", function () {
+  remindTodos();
+});
 module.exports = app;
