@@ -161,18 +161,13 @@ app.post("/userdetail", async (request, response) => {
       return response.redirect("/Signup");
     } else {
       const hashPass = await bcrypt.hash(request.body.password, saltround);
-
       const add = await User.create({
-        FirstName: request.body.fname,
-        LastName: request.body.lname,
+        FirstName: request.body.FirstName,
+        LastName: request.body.LastName,
         email: request.body.email,
         password: hashPass,
       });
-      console.log(request.body.email);
-      console.log(hashPass);
-      console.log(request.body.fname);
-      console.log(request.body.lname);
-      console.log(await bcrypt.compare(request.body.password, hashPass));
+      console.log(add);
       request.login(add, (err) => {
         if (err) {
           console.log(err);
@@ -203,7 +198,8 @@ app.post(
     try {
       let todotitle = request.body.title;
       let completiondate = request.body.dueDate ?? new Date().toISOString();
-      console.log(completiondate);
+      // console.log(completiondate);
+
       const todos = await Todo.create({
         title: todotitle.trim(),
         dueDate: completiondate,
@@ -277,7 +273,7 @@ const remindTodos = async () => {
   usersId.map(async (id) => {
     let userIncomplete = await Todo.incompleteTodosByUser(today, id);
     let { FirstName, email } = await User.findByPk(id);
-    console.log(email);
+    // console.log(email);
     let todosList = userIncomplete.map((todo, index) => {
       return `(${index + 1}) ${todo.title}\n`;
     });
@@ -305,7 +301,13 @@ const remindTodos = async () => {
     );
   });
 };
-cron.schedule("0 19 * * *", function () {
-  remindTodos();
-});
+cron.schedule(
+  "37 17 * * *",
+  function () {
+    remindTodos();
+  },
+  {
+    timezone: "Asia/Calcutta",
+  }
+);
 module.exports = app;
