@@ -120,7 +120,7 @@ app.get(
     const tomorrow = await Todo.duelater(UserId);
     const today = await Todo.duetoday(UserId);
     const completedtodos = await Todo.completetodo(UserId);
-
+    console.log(today);
     if (request.accepts("html")) {
       response.status(202).render("index", {
         yesterday,
@@ -302,7 +302,7 @@ const remindTodos = async () => {
   });
 };
 cron.schedule(
-  "37 17 * * *",
+  "42 17 * * *",
   function () {
     remindTodos();
   },
