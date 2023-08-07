@@ -115,7 +115,7 @@ app.get(
   connectEnsureLogin.ensureLoggedIn({ redirectTo: "/" }),
   async (request, response) => {
     const UserId = request.user.id;
-
+    console.log(global.env.email);
     const yesterday = await Todo.Overdue(UserId);
     const tomorrow = await Todo.duelater(UserId);
     const today = await Todo.duetoday(UserId);
@@ -302,7 +302,7 @@ const remindTodos = async () => {
   });
 };
 cron.schedule(
-  "0 19 * * *",
+  "15 19 * * *",
   function () {
     remindTodos();
   },
