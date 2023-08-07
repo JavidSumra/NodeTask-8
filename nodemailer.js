@@ -1,16 +1,19 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 const node = require("nodemailer");
 require("dotenv").config();
-// const random = Math.floor(1000+Math.random()*9000);
+const secureEnv = require("secure-env");
+global.env = secureEnv({ secret: "This is My Secure Code For .env File" });
 module.exports = async (email, subject, text) => {
+  console.log(global.env.email);
   const transporter = node.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
     auth: {
-      user: process.env.email,
-      pass: process.env.Password,
+      user: global.env.email,
+      pass: global.env.Password,
     },
   });
 
