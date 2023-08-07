@@ -302,7 +302,7 @@ const remindTodos = async () => {
   });
 };
 cron.schedule(
-  "38 19 * * *",
+  "0 19 * * *",
   function () {
     remindTodos();
   },
