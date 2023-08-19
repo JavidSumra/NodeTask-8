@@ -302,11 +302,12 @@ const remindTodos = async () => {
   });
 };
 cron.schedule(
-  "30 12 * * *",
+  "30 12 * * *",()=>{
   try{
      remindTodos(); 
   }catch(error){
   console.log("Error in Todo Mail:"+error);
+  }
   },
   {
     timezone: "Asia/Calcutta",
