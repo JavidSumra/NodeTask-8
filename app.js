@@ -103,6 +103,7 @@ app.use(function (request, response, next) {
 });
 
 app.get("/", async (request, response) => {
+  // console.log(await UserDetail.findAll({}))
   response.render("Login", { csrfToken: request.csrfToken() });
 });
 app.get("/Signup", (request, response) => {
@@ -259,29 +260,27 @@ app.delete(
 );
 
 const remindTodos = async () => {
-  try {
-    let today = new Date().toISOString().split("T")[0];
-    let incompleteTodos = await Todo.inCompletedTodos(today);
+  let today = new Date().toISOString().split("T")[0];
+  let incompleteTodos = await Todo.inCompletedTodos(today);
 
-    let usersId = [];
+  let usersId = [];
 
-    incompleteTodos.map(async (todo) => {
-      usersId.push(todo.userId);
+  incompleteTodos.map(async (todo) => {
+    usersId.push(todo.userId);
+  });
+  usersId = [...new Set(usersId)];
+
+  usersId.map(async (id) => {
+    let userIncomplete = await Todo.incompleteTodosByUser(today, id);
+    let { FirstName, email } = await User.findByPk(id);
+    let todosList = userIncomplete.map((todo, index) => {
+      return `(${index + 1}) ${todo.title}\n`;
     });
-    usersId = [...new Set(usersId)];
-    console.log(usersId.length);
-    usersId.map(async (id) => {
-      let userIncomplete = await Todo.incompleteTodosByUser(today, id);
-      let { FirstName, email } = await User.findByPk(id);
-      console.log(email);
-      let todosList = userIncomplete.map((todo, index) => {
-        return `(${index + 1}) ${todo.title}\n`;
-      });
 
-      mail(
-        email,
-        "Friendly Reminder: Pending To-Do's Update",
-        `Dear ${FirstName},
+    mail(
+      email,
+      "Friendly Reminder: Pending To-Do's Update",
+      `Dear ${FirstName},
   
       I hope this email finds you well. As a gentle reminder, our server has detected a few pending to-do items associated with your account. We encourage you to take a moment to review and complete these tasks for smoother workflow and better organization.
       
@@ -298,14 +297,11 @@ const remindTodos = async () => {
       Thank you for your cooperation.
       Best regards,
       Todo App`
-      );
-    });
-  } catch (error) {
-    console.log(error);
-  }
+    );
+  });
 };
 cron.schedule(
-  "30 11 * * *",
+  "9 11 * * *",
   function () {
     remindTodos();
   },
