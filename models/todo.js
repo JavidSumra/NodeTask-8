@@ -70,12 +70,29 @@ module.exports = (sequelize, DataTypes) => {
         order: [["id", "ASC"]],
       });
     }
+    static inCompletedTodos(dueDate) {
+      return this.findAll({
+        where: {
+          dueDate,
+          completed: false,
+        },
+      });
+    }
+    static incompleteTodosByUser(dueDate, userId) {
+      return this.findAll({
+        where: {
+          userId,
+          dueDate,
+          completed: false,
+        },
+      });
+    }
     setCompletionStatus(status) {
       return this.update({ completed: status });
     }
 
-    static DestroyTodo(id,userId) {
-     return this.destroy({
+    static DestroyTodo(id, userId) {
+      return this.destroy({
         where: {
           id,
           userId,
