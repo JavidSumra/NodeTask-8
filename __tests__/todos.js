@@ -22,7 +22,7 @@ const login = async (agent, username, password) => {
 describe("Todo test suite ", () => {
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
-    server = app.listen(3000, () => {});
+    server = app.listen(3005, () => {});
     agent = request.agent(server);
   });
   afterAll(async () => {
@@ -31,7 +31,7 @@ describe("Todo test suite ", () => {
   });
 
   test("Signup", async () => {
-    let res = await agent.get("/Signup");
+    let res = await agent.get("/signup");
 
     const csrfToken = extractCsrfToken(res);
 

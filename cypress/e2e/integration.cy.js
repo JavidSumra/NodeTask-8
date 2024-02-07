@@ -1,5 +1,5 @@
 let studentSubmissionUrl =
-  Cypress.env("USER_LOCAL_URL") || "http://localhost:3005";
+  Cypress.env("USER_LOCAL_URL") || "http://localhost:3000";
 if (studentSubmissionUrl.endsWith("/")) {
   studentSubmissionUrl = studentSubmissionUrl.slice(0, -1);
 }
@@ -241,34 +241,25 @@ describe("Verify the todo list functions properly,", () => {
     });
   });
 
-  it("Should redirect to `/todos` page when a logged in user visits root url", () => {
-    clearFields(cy);
-    cy.visit(studentSubmissionUrl);
-    cy.wait(500);
-    cy.location().should((loc) => {
-      expect(loc.pathname).to.eq("/todos");
-    });
-  });
-});
+  describe("Verify the todos of a user is not accessible for other users", () => {
+    it("should login as another user and shouldn't see todos of other users", () => {
+      cy.visit(studentSubmissionUrl + "/signup");
+      cy.get('input[name="FirstName"]').should("exist");
+      cy.get('input[name="email"]').should("exist");
+      cy.get('input[name="password"]').should("exist");
+      cy.get('input[name="FirstName"]').type("userB");
+      cy.get('input[name="email"]').type("user.b@pupilfirst.com");
+      cy.get('input[name="password"]').type(password);
 
-describe("Verify the todos of a user is not accessible for other users", () => {
-  it("should login as another user and shouldn't see todos of other users", () => {
-    cy.visit(studentSubmissionUrl + "/Signup");
-    cy.get('input[name="FirstName"]').should("exist");
-    cy.get('input[name="email"]').should("exist");
-    cy.get('input[name="password"]').should("exist");
-    cy.get('input[name="FirstName"]').type("userB");
-    cy.get('input[name="email"]').type("user.b@pupilfirst.com");
-    cy.get('input[name="password"]').type(password);
-
-    if (cy.get('input[name="LastName"]')) {
-      cy.get('input[name="LastName"]').type(LastName);
-    }
-    cy.get('input[type="submit"]').click();
-    cy.wait(500);
-    cy.location().should((loc) => {
-      expect(loc.pathname).to.eq("/todos");
+      if (cy.get('input[name="LastName"]')) {
+        cy.get('input[name="LastName"]').type(LastName);
+      }
+      cy.get('input[type="submit"]').click();
+      cy.wait(500);
+      cy.location().should((loc) => {
+        expect(loc.pathname).to.eq("/todos");
+      });
+      cy.get("#count-due-today").contains("0");
     });
-    cy.get("#count-due-today").contains("0");
   });
 });

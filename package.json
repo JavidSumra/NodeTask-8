@@ -6,7 +6,7 @@
     "start": "node index.js",
     "pretest": "npx sequelize-cli db:drop && npx sequelize-cli db:create",
     "test": " jest --forceExit",
-    "cypress": "SET NODE_ENV= test && npx cypress run --env USER_LOCAL_URL=http://localhost:3005"
+    "cypress": "SET NODE_ENV= test && npx cypress run --env USER_LOCAL_URL=http://localhost:3000"
   },
   "lint-staged": {
     "*.js": [

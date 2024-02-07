@@ -108,7 +108,8 @@ app.get("/", async (request, response) => {
   }
   response.render("Login", { csrfToken: request.csrfToken() });
 });
-app.get("/Signup", (request, response) => {
+
+app.get("/signup", (request, response) => {
   response.render("SignUp", { csrfToken: request.csrfToken() });
 });
 
@@ -160,7 +161,7 @@ app.post("/userdetail", async (request, response) => {
     });
     if (findUser.length != 0) {
       request.flash("error", "Email Already Exist");
-      return response.redirect("/Signup");
+      return response.redirect("/signup");
     } else {
       const hashPass = await bcrypt.hash(request.body.password, saltround);
       const add = await User.create({
