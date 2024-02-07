@@ -103,7 +103,9 @@ app.use(function (request, response, next) {
 });
 
 app.get("/", async (request, response) => {
-  // console.log(await UserDetail.findAll({}))
+  if (request.isAuthenticated()) {
+    response.redirect("/todos");
+  }
   response.render("Login", { csrfToken: request.csrfToken() });
 });
 app.get("/Signup", (request, response) => {
@@ -111,7 +113,7 @@ app.get("/Signup", (request, response) => {
 });
 
 app.get(
-  "/todoPage",
+  "/todos",
   connectEnsureLogin.ensureLoggedIn({ redirectTo: "/" }),
   async (request, response) => {
     const UserId = request.user.id;
@@ -120,7 +122,7 @@ app.get(
     const tomorrow = await Todo.duelater(UserId);
     const today = await Todo.duetoday(UserId);
     const completedtodos = await Todo.completetodo(UserId);
-    console.log(today);
+    // console.log(today);
     if (request.accepts("html")) {
       response.status(202).render("index", {
         yesterday,
@@ -172,7 +174,7 @@ app.post("/userdetail", async (request, response) => {
         if (err) {
           console.log(err);
         }
-        return response.redirect("/todoPage");
+        return response.status(202).redirect("/todos");
       });
     }
   } catch (error) {
@@ -188,7 +190,7 @@ app.post(
     // console.log(request.body);
     request.flash("success", "Login Successfully");
 
-    response.redirect("/todoPage");
+    response.redirect("/todos");
   }
 );
 app.post(
@@ -208,7 +210,7 @@ app.post(
       });
 
       request.flash("success", "Added Successfully");
-      return response.redirect("/todoPage");
+      return response.redirect("/todos");
     } catch (error) {
       return response.status(422).json(error);
     }
@@ -223,16 +225,20 @@ app.put(
   async function (request, response) {
     const todoupdate = await Todo.findByPk(request.params.id);
     try {
-      const updatedTodolist = await todoupdate.setCompletionStatus(
-        request.body.completed
-      );
+      if (todoupdate.userId === request.user.id) {
+        const updatedTodolist = await todoupdate.setCompletionStatus(
+          request.body.completed
+        );
 
-      if (updatedTodolist ? true : false) {
-        request.flash("success", "Successfully Updated");
+        if (updatedTodolist ? true : false) {
+          request.flash("success", "Successfully Updated");
+        } else {
+          request.flash("error", "Failed Update");
+        }
+        return response.json(updatedTodolist);
       } else {
-        request.flash("error", "Failed Update");
+        return response.status(403).json(todoupdate);
       }
-      return response.json(updatedTodolist);
     } catch (error) {
       console.log(error);
       return response.status(400).json(error);
@@ -245,10 +251,10 @@ app.delete(
 
   connectEnsureLogin.ensureLoggedIn({ redirectTo: "/" }),
   async function (request, response) {
-    console.log(
-      "We have to delete a Todo with ID: ",
-      request.params.id + " " + request.user.id
-    );
+    // console.log(
+    //   "We have to delete a Todo with ID: ",
+    //   request.params.id + " " + request.user.id
+    // );
     let deleteItem = await Todo.DestroyTodo(request.params.id, request.user.id);
     if (deleteItem ? true : false) {
       request.flash("success", "Successfully Deleted");

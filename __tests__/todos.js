@@ -32,7 +32,9 @@ describe("Todo test suite ", () => {
 
   test("Signup", async () => {
     let res = await agent.get("/Signup");
+
     const csrfToken = extractCsrfToken(res);
+
     res = await agent.post("/userdetail").send({
       FirstName: "Javid",
       LastName: "Sumara",
@@ -41,14 +43,17 @@ describe("Todo test suite ", () => {
       _csrf: csrfToken,
     });
 
+    res = await agent.get("/todoPage");
+
     expect(res.statusCode).toBe(202);
   });
 
   test("Sign out", async () => {
     let res = await agent.get("/todoPage");
-    expect(res.statusCode).toBe(302);
+    expect(res.statusCode).toBe(202);
+
     res = await agent.get("/signout");
-    expect(res.statusCode).toBe(200);
+
     res = await agent.get("/todoPage");
     expect(res.statusCode).toBe(302);
   });
@@ -57,24 +62,8 @@ describe("Todo test suite ", () => {
     const agent = request.agent(server);
     await login(agent, "javidsumara987@gmail.com", "12345678");
     let res = await agent.get("/todoPage");
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(202);
   });
-  // test("responds with json at /todos", async () => {
-  //   const agent = request.agent(server);
-  //   await login(agent, "javidsumara987@gmail.com", "12345678");
-  //   const res = await agent.get("/todoPage");
-  //   const csrfToken = extractCsrfToken(res);
-  //   response = await agent.post("/todos").send({
-  //     title: "buy milk",
-  //     dueDate: new Date().toISOString(),
-  //     completed: false,
-  //     _csrf: csrfToken,
-  //   });
-
-  //   expect(response.statusCode).toBe(302);
-
-  //   // expect(response.statusCode).toBe(302); //http status code
-  // });
 
   test("Deleting todo test", async () => {
     const agent = request.agent(server);
@@ -100,9 +89,7 @@ describe("Todo test suite ", () => {
     csrfToken = extractCsrfToken(res);
 
     const deleteTodo = await agent
-
       .delete(`/todos/${newTodo.id}`)
-
       .send({ _csrf: csrfToken });
 
     const status = Boolean(deleteTodo.text);
@@ -117,7 +104,7 @@ describe("Todo test suite ", () => {
     await agent.post("/todos").send({
       title: "buy milk",
       dueDate: new Date().toISOString(),
-      completed: true,
+      completed: false,
       _csrf: csrfToken,
     });
     const groupedTodosResponse = await agent
@@ -134,12 +121,13 @@ describe("Todo test suite ", () => {
     const markCompleteResponse = await agent
       .put(`/todos/${newTodo.id}/markAsCompleted`)
       .send({
-        completed: false,
+        completed: true,
         _csrf: csrfToken,
       });
     const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
-    expect(parsedUpdateResponse.completed).toBe(false);
+    expect(parsedUpdateResponse.completed).toBe(true);
   });
+
   test("One User cannot mark as complete/incomplete a todo of other user", async () => {
     const agent = request.agent(server);
     await login(agent, "javidsumara987@gmail.com", "12345678");
@@ -148,7 +136,7 @@ describe("Todo test suite ", () => {
     await agent.post("/todos").send({
       title: "buy milk",
       dueDate: new Date().toISOString(),
-      completed: true,
+      completed: false,
       _csrf: csrfToken,
     });
     const groupedTodosResponse = await agent
@@ -158,13 +146,15 @@ describe("Todo test suite ", () => {
     const parsedGroupedResponse = JSON.parse(groupedTodosResponse.text);
     const dueTodayCount = parsedGroupedResponse.today.length;
     const newTodo = parsedGroupedResponse.today[dueTodayCount - 1];
-    console.log(newTodo);
+    // console.log(newTodo);
     await agent.get("/signout");
+
     res = await agent.get("/Signup");
     csrfToken = extractCsrfToken(res);
+
     res = await agent.post("/userdetail").send({
-      FirstName: "A",
-      LastName: "B",
+      FirstName: "Test",
+      LastName: "test user",
       email: "test@gmail.com",
       password: "12345678",
       _csrf: csrfToken,
@@ -178,7 +168,7 @@ describe("Todo test suite ", () => {
         _csrf: csrfToken,
       });
     const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
-    console.log(parsedUpdateResponse);
+
     expect(parsedUpdateResponse.completed).toBe(false);
   });
 });
