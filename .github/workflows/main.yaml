@@ -38,14 +38,13 @@ jobs:
       # Performs a clean installation of all dependencies in the `package.json` file
       # For more information, see https://docs.npmjs.com/cli/ci.html
       - name: Install dependencies
-        run: cd NODETASK-8 && npm ci
+        run: npm i
 
       - name: Run unit tests
-        run: cd NODETASK-8 && npm test
+        run: npm test
       - name: Run the app
         id: run-app
         run: |
-          cd NODETASK-8
           npm install
           npx sequelize-cli db:drop
           npx sequelize-cli db:create
@@ -55,6 +54,5 @@ jobs:
 
       - name: Run integration tests
         run: |
-          cd NODETASK-8
           npm install cypress
           npx cypress run --env USER_LOCAL_URL="http://localhost:3000/"
