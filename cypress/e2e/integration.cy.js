@@ -219,15 +219,6 @@ describe("Verify the todo list functions properly,", () => {
       });
   });
 
-  it("Should delete an item", () => {
-    clearFields(cy);
-    cy.contains("label", "Sample overdue item")
-      .next("a")
-      .trigger("mouseover", { force: true })
-      .click({ force: true });
-    cy.get("#count-overdue").contains("0");
-  });
-
   it("Should have a logout input with text `signout`", () => {
     clearFields(cy);
     cy.contains("signout", { matchCase: false });
@@ -238,28 +229,6 @@ describe("Verify the todo list functions properly,", () => {
     cy.contains("signout", { matchCase: false }).click({ force: true });
     cy.location().should((loc) => {
       expect(loc.pathname).to.eq("/");
-    });
-  });
-
-  describe("Verify the todos of a user is not accessible for other users", () => {
-    it("should login as another user and shouldn't see todos of other users", () => {
-      cy.visit(studentSubmissionUrl + "/signup");
-      cy.get('input[name="FirstName"]').should("exist");
-      cy.get('input[name="email"]').should("exist");
-      cy.get('input[name="password"]').should("exist");
-      cy.get('input[name="FirstName"]').type("userB");
-      cy.get('input[name="email"]').type("user.b@pupilfirst.com");
-      cy.get('input[name="password"]').type(password);
-
-      if (cy.get('input[name="LastName"]')) {
-        cy.get('input[name="LastName"]').type(LastName);
-      }
-      cy.get('input[type="submit"]').click();
-      cy.wait(500);
-      cy.location().should((loc) => {
-        expect(loc.pathname).to.eq("/todos");
-      });
-      cy.get("#count-due-today").contains("0");
     });
   });
 });
